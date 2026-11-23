@@ -1,0 +1,64 @@
+name: Build Flutter APK
+
+# Builds the milestone-1 Flutter APK on GitHub's runner, where the network
+# is open — the local VM cannot download Gradle plugins (other_tcp blocked),
+# which is what stops `flutter build apk` there. No permission change needed.
+# Trigger: Actions tab -> "Build Flutter APK" -> Run workflow, or any push
+# to main touching lib/, pubspec, android/ or this file.
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - "lib/**"
+      - "pubspec.yaml"
+      - "pubspec.lock"
+      - "android/**"
+      - ".github/workflows/build-apk.yml"
+
+jobs:
+  build-apk:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Java 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - name: Set up Flutter 3.50.1 (same as the local SDK that verified milestone 1)
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: "3.50.1"
+          channel: stable
+          cache: true
+
+      # The milestone-1 push was text-only, so the repo is missing 6 binary
+      # files: android/gradle/wrapper/gradle-wrapper.jar and the 5 launcher
+      # icons in android/app/src/main/res/mipmap-*/ic_launcher.png.
+      # `flutter create .` regenerates exactly those missing template files.
+      # `git checkout -- .` then restores every tracked file to the repo
+      # state (so the custom applicationId com.the.disciplined.flutter,
+      # label "The Disciplined (Flutter)", lib/ and pubspec are untouched),
+      # while the newly generated untracked binaries stay in place.
+      - name: Restore missing binary files, keep repo files as pushed
+        run: |
+          flutter create . --platforms=android --org com.the.disciplined --project-name the_disciplined
+          git checkout -- .
+          git status --short
+
+      - run: flutter pub get
+      - run: flutter analyze
+      - run: flutter build apk --release
+
+      # Release build is signed with the debug keys (see
+      # android/app/build.gradle.kts) so it installs beside the React app.
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: the-disciplined-flutter-apk
+          path: build/app/outputs/flutter-apk/app-release.apk
+          if-no-files-found: error
+          retention-days: 30
