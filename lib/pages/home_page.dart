@@ -114,21 +114,53 @@ class HomePage extends GetView<AppController> {
 
   Widget _goalCard(_Goal g) {
     return Obx(() {
-      // Milestone 1: food reflects today's logged kcal; the other goals
-      // light up as their data layers land (milestones 2–4).
-      final isFood = g.route == '/food';
-      final progress = isFood && controller.kcalTarget.value > 0
-          ? (controller.kcalToday.value / controller.kcalTarget.value).clamp(
-              0.0,
-              1.0,
-            )
-          : 0.0;
-      final status = isFood && controller.kcalToday.value > 0
-          ? L(
+      // Every card reads its own observable from the controller's
+      // mirrors. (An Obx that reads no observable throws in GetX and
+      // renders as a grey box in release builds — that was the blank
+      // Home section in 1.2.0.)
+      var progress = 0.0;
+      var status = L('Nothing logged yet today', 'لم تسجل شيئاً اليوم');
+      switch (g.route) {
+        case '/gym':
+          final week = controller.gymSessionsWeek.value;
+          final trained = controller.gymTrainedToday.value;
+          progress = trained ? 1.0 : (week / 3).clamp(0.0, 0.9);
+          status = trained
+              ? L('Trained today ✓', 'تدرّبت اليوم ✓')
+              : L('$week workouts this week', '$week تمارين هذا الأسبوع');
+          break;
+        case '/food':
+          if (controller.kcalTarget.value > 0) {
+            progress = (controller.kcalToday.value / controller.kcalTarget.value)
+                .clamp(0.0, 1.0);
+          }
+          if (controller.kcalToday.value > 0) {
+            status = L(
               '${controller.kcalToday.value} of ${controller.kcalTarget.value} kcal',
               '${controller.kcalToday.value} من ${controller.kcalTarget.value} سعرة',
-            )
-          : L('Nothing logged yet today', 'لم تسجل شيئاً اليوم');
+            );
+          }
+          break;
+        case '/prayer':
+          progress = controller.prayerScoreToday.value;
+          final prayed = (progress * 5).round();
+          status = L('$prayed of 5 prayers today', '$prayed من 5 صلوات اليوم');
+          break;
+        case '/social':
+          final due = controller.socialDueCount.value;
+          progress = due == 0 ? 1.0 : 0.4;
+          status = due == 0
+              ? L('Everyone in touch', 'الجميع على تواصل')
+              : L('$due people due a call', '$due أشخاص حان التواصل معهم');
+          break;
+        case '/english':
+          final words = controller.englishWordsStarted.value;
+          progress = words == 0 ? 0.0 : (words / 30).clamp(0.0, 1.0);
+          status = words == 0
+              ? L('No words started yet', 'لم تبدأ كلمات بعد')
+              : L('$words words started', 'بدأت $words كلمة');
+          break;
+      }
       return Card(
         child: InkWell(
           borderRadius: BorderRadius.circular(16),

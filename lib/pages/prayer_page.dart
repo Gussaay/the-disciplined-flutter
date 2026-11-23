@@ -52,6 +52,7 @@ class _PrayerPageState extends State<PrayerPage> {
       log[today] = day;
     });
     box.write('prayerLog', log);
+    app.loadLocal();
   }
 
   String _fmt(DateTime d) {
@@ -132,7 +133,7 @@ class _PrayerPageState extends State<PrayerPage> {
     final status = entry is Map ? entry['s']?.toString() : null;
     final mosque = entry is Map && entry['m'] == true;
     return Card(
-      color: isNext ? Theme.of(context).colorScheme.primaryContainer : null,
+      color: isNext ? const Color(0xFFDCEDE8) : null,
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
