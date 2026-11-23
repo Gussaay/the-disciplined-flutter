@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
+
+import '../update_check.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 
@@ -199,9 +202,83 @@ class _SettingsPageState extends State<SettingsPage> {
           const SizedBox(height: 16),
           FilledButton(onPressed: _save, child: Text(L('Save', 'حفظ'))),
           const SizedBox(height: 12),
-          const Center(child: Text('The Disciplined (Flutter) · v1.1.0', style: TextStyle(color: Colors.grey, fontSize: 12))),
+          Card(
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    L('App updates', 'تحديثات التطبيق'),
+                    style: Theme.of(context).textTheme.titleMedium,
+                  ),
+                  const SizedBox(height: 6),
+                  Text(
+                    L('Version $kAppVersion (build $kAppBuild). Updates are free: the app checks the GitHub Release and offers the new APK directly.', 'الإصدار $kAppVersion (بناء $kAppBuild). التحديثات مجانية: يتحقق التطبيق من إصدار GitHub ويعرض ملف APK الجديد مباشرة.'),
+                  ),
+                  const SizedBox(height: 8),
+                  _UpdateButton(),
+                ],
+              ),
+            ),
+          ),
+          const SizedBox(height: 12),
+          Center(child: Text('The Disciplined (Flutter) · v$kAppVersion', style: TextStyle(color: Colors.grey, fontSize: 12))),
         ],
       ),
+    );
+  }
+}
+
+class _UpdateButton extends StatefulWidget {
+  @override
+  State<_UpdateButton> createState() => _UpdateButtonState();
+}
+
+class _UpdateButtonState extends State<_UpdateButton> {
+  bool busy = false;
+  String result = '';
+  UpdateInfo? update;
+
+  Future<void> _check() async {
+    setState(() {
+      busy = true;
+      result = '';
+    });
+    final info = await checkForUpdate();
+    setState(() {
+      busy = false;
+      update = info != null && info.isNewer ? info : null;
+      result = info == null
+          ? 'Could not check now.'
+          : info.isNewer
+              ? 'Version ${info.version} is available.'
+              : 'You have the latest version.';
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(children: [
+          FilledButton.tonal(
+            onPressed: busy ? null : _check,
+            child: Text(busy ? 'Checking…' : 'Check for updates'),
+          ),
+          if (update != null)
+            Padding(
+              padding: const EdgeInsets.only(left: 8),
+              child: FilledButton(
+                onPressed: () => launchUrl(Uri.parse(update!.apk), mode: LaunchMode.externalApplication),
+                child: const Text('Download the new APK'),
+              ),
+            ),
+        ]),
+        if (result.isNotEmpty)
+          Padding(padding: const EdgeInsets.only(top: 6), child: Text(result)),
+      ],
     );
   }
 }

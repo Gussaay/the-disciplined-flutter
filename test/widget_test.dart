@@ -21,6 +21,7 @@ void main() {
       containsAll(<String>{
         AppRoutes.home,
         AppRoutes.gym,
+        AppRoutes.gymSession,
         AppRoutes.food,
         AppRoutes.prayer,
         AppRoutes.quran,
@@ -34,7 +35,7 @@ void main() {
         AppRoutes.settings,
       }),
     );
-    expect(names, hasLength(13));
+    expect(names, hasLength(14));
   });
 
   test('brand tokens match the React design system', () {

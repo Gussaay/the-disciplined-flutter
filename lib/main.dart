@@ -7,6 +7,9 @@ import 'app/routes.dart';
 import 'app/theme.dart';
 import 'data/app_controller.dart';
 import 'data/food_controller.dart';
+import 'data/gym_controller.dart';
+import 'data/watch_controller.dart';
+import 'data/weight_controller.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
