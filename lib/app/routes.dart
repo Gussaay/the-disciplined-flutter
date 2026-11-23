@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../pages/food_page.dart';
 import '../pages/home_page.dart';
+import '../pages/settings_page.dart';
 import '../pages/shell_page.dart';
 import 'theme.dart';
 
@@ -66,18 +68,7 @@ abstract final class AppPages {
       noteEn: 'Training tools, live sessions and the per-tool dashboards are ported in milestone 3.',
       noteAr: 'تُنقل أدوات التمرين والحصص ولوحات كل أداة في المرحلة الثالثة.',
     ),
-    _shell(
-      AppRoutes.food,
-      titleEn: 'Healthy food',
-      titleAr: 'الغذاء الصحي',
-      mottoEn: 'Eat to live well',
-      mottoAr: 'كُل لتحيا بصحة',
-      color: GoalColors.food,
-      dark: const Color(0xFF3B5C17),
-      icon: Icons.restaurant_outlined,
-      noteEn: 'The food log, the trainer’s 2,800 kcal plan and the AI coach are ported in milestone 2.',
-      noteAr: 'يُنقل سجل الغذاء وجدول المدرب ٢٨٠٠ سعرة والمدرب الذكي في المرحلة الثانية.',
-    ),
+    GetPage(name: AppRoutes.food, page: () => const FoodPage()),
     _shell(
       AppRoutes.prayer,
       titleEn: 'Prayer',
@@ -186,18 +177,6 @@ abstract final class AppPages {
       noteEn: 'Week, month and three-month views are ported in milestone 4.',
       noteAr: 'تُنقل عروض الأسبوع والشهر والثلاثة أشهر في المرحلة الرابعة.',
     ),
-    _shell(
-      AppRoutes.settings,
-      titleEn: 'Settings',
-      titleAr: 'الإعدادات',
-      mottoEn: 'Your app, your way',
-      mottoAr: 'تطبيقك على طريقتك',
-      color: Brand.pine800,
-      dark: Brand.pine900,
-      icon: Icons.settings_outlined,
-      noteEn:
-          'Profile, targets, theme and the app lock are ported in milestone 2.',
-      noteAr: 'يُنقل الملف الشخصي والأهداف والمظهر وقفل التطبيق في المرحلة الثانية.',
-    ),
+    GetPage(name: AppRoutes.settings, page: () => const SettingsPage()),
   ];
 }

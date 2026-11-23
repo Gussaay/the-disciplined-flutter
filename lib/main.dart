@@ -6,6 +6,7 @@ import 'package:get_storage/get_storage.dart';
 import 'app/routes.dart';
 import 'app/theme.dart';
 import 'data/app_controller.dart';
+import 'data/food_controller.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -15,7 +16,15 @@ Future<void> main() async {
     const SystemUiOverlayStyle(statusBarColor: Brand.pine800),
   );
   Get.put(AppController(), permanent: true);
-  runApp(const DisciplinedApp());
+  Get.put(FoodController(), permanent: true);
+  final savedTheme = GetStorage().read<String>('themeMode') ?? 'system';
+  runApp(DisciplinedApp(
+    themeMode: savedTheme == 'dark'
+        ? ThemeMode.dark
+        : savedTheme == 'light'
+            ? ThemeMode.light
+            : ThemeMode.system,
+  ));
 }
 
 /// The Disciplined — Flutter edition.
@@ -24,7 +33,9 @@ Future<void> main() async {
 /// design tokens, same route map. The React app stays the production app
 /// until this edition reaches parity and a decision is made.
 class DisciplinedApp extends StatelessWidget {
-  const DisciplinedApp({super.key});
+  const DisciplinedApp({super.key, this.themeMode = ThemeMode.system});
+
+  final ThemeMode themeMode;
 
   @override
   Widget build(BuildContext context) {
@@ -33,7 +44,7 @@ class DisciplinedApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: buildLightTheme(),
       darkTheme: buildDarkTheme(),
-      themeMode: ThemeMode.system,
+      themeMode: themeMode,
       initialRoute: AppRoutes.home,
       getPages: AppPages.pages,
       locale: Get.deviceLocale,
