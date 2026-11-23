@@ -1,6 +1,6 @@
-/// Watches on Realtek chips (the GZCSW02 among them) — a port of the
-/// React edition's ls02.js: the GloryFit command set on the general
-/// channel (55FF/33F1) and the notification parser. Pure functions.
+// Watches on Realtek chips (the GZCSW02 among them) — a port of the
+// React edition's ls02.js: the GloryFit command set on the general
+// channel (55FF/33F1) and the notification parser. Pure functions.
 
 String _base(String short) => '0000$short-0000-1000-8000-00805f9b34fb';
 
@@ -77,8 +77,8 @@ bool _sameDay(List<int> p, int i, DateTime now) =>
 
 int? _bpmOf(int v) => (v > 25 && v < 230) ? v : null;
 
-/// Reads one notification. [steps] is the caller's hour → steps map for
-/// today; a step history ends with {type: 'day', steps: total}.
+// Reads one notification. [steps] is the caller's hour → steps map for
+// today; a step history ends with {type: 'day', steps: total}.
 Map<String, dynamic>? parseLs02(List<int> p, {DateTime? now, Map<int, int>? steps}) {
   final t = now ?? DateTime.now();
   final stepMap = steps ?? <int, int>{};

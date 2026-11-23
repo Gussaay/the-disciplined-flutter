@@ -1,8 +1,8 @@
-/// Training maths, ported from the React edition's gym.js and
-/// gymSession.js. A session is a map:
-/// { id, date: 'YYYY-MM-DD', startedAt, endedAt, name,
-///   exercises: [{ exerciseId, unit, muscle, sets: [{ reps, weight,
-///   seconds, minutes, km, done }] }] }
+// Training maths, ported from the React edition's gym.js and
+// gymSession.js. A session is a map:
+// { id, date: 'YYYY-MM-DD', startedAt, endedAt, name,
+//   exercises: [{ exerciseId, unit, muscle, sets: [{ reps, weight,
+//   seconds, minutes, km, done }] }] }
 
 double _n(Object? v) => v is num ? v.toDouble() : 0;
 
@@ -40,7 +40,7 @@ int sessionMinutes(Map<String, dynamic> session) {
   return m < 1 ? 1 : m;
 }
 
-/// The last finished performance of an exercise: its done sets + date.
+// The last finished performance of an exercise: its done sets + date.
 Map<String, dynamic>? lastPerformance(List<Map<String, dynamic>> sessions, String exerciseId) {
   Map<String, dynamic>? found;
   for (final s in sessions) {
@@ -64,7 +64,7 @@ class ToolStats {
   final Map<String, Map<String, dynamic>> perExercise = {};
 }
 
-/// Stats for one tool over all sessions — the React toolStats().
+// Stats for one tool over all sessions — the React toolStats().
 ToolStats toolStats(List<Map<String, dynamic>> sessions, Set<String> exerciseIds) {
   final out = ToolStats();
   var lastAt = 0;
@@ -112,7 +112,7 @@ Map<String, dynamic> blankSet(String unit) {
   return {'weight': '', 'reps': '', 'done': false};
 }
 
-/// An exercise ready to log; sets start from last time's weights.
+// An exercise ready to log; sets start from last time's weights.
 Map<String, dynamic> makeExercise(Map<String, dynamic> exercise, List<Map<String, dynamic>> sessions) {
   final unit = (exercise['unit'] ?? 'kg').toString();
   final last = lastPerformance(sessions, exercise['id'].toString());
@@ -140,7 +140,7 @@ bool setComplete(Map<String, dynamic> set, String unit) {
   return _n(set['reps']) > 0;
 }
 
-/// Drops unfinished sets and empty exercises, stamps the end time.
+// Drops unfinished sets and empty exercises, stamps the end time.
 Map<String, dynamic> finishSession(Map<String, dynamic> session, int nowMs) {
   final exercises = <Map<String, dynamic>>[];
   for (final e in ((session['exercises'] as List?) ?? []).whereType<Map>()) {

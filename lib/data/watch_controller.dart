@@ -33,7 +33,6 @@ class WatchController extends GetxController {
 
   BluetoothDevice? _device;
   BluetoothCharacteristic? _writeChar;
-  BluetoothCharacteristic? _hrChar;
   final Map<int, int> _hourSteps = {};
   final List<StreamSubscription> _subs = [];
   bool _isLs02 = false;
@@ -100,7 +99,6 @@ class WatchController extends GetxController {
         }
       }
       if (!_isLs02 && hrNotify != null) {
-        _hrChar = hrNotify;
         await hrNotify.setNotifyValue(true);
         _subs.add(hrNotify.onValueReceived.listen(_onHeartRateService));
         status.value = 'Connected (heart-rate only)';
@@ -233,7 +231,6 @@ class WatchController extends GetxController {
     connected.value = false;
     status.value = '';
     _writeChar = null;
-    _hrChar = null;
   }
 
   @override

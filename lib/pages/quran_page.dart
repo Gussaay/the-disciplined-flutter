@@ -17,7 +17,6 @@ class QuranPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final app = Get.find<AppController>();
     String t(String en, String ar) => L(en, ar);
     final box = GetStorage();
     final progress = Map<String, dynamic>.from(box.read<Map>('quranProgress') ?? {});
@@ -84,13 +83,12 @@ class _SurahReaderPageState extends State<SurahReaderPage> {
   void _setVerses(String body) {
     final data = jsonDecode(body) as Map<String, dynamic>;
     setState(() {
-      verses = ((data['v'] as List) ?? []).map((v) => (v as List).map((x) => x.toString()).toList()).toList();
+      verses = ((data['v'] as List?) ?? const []).map((v) => (v as List).map((x) => x.toString()).toList()).toList();
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    final app = Get.find<AppController>();
     String t(String en, String ar) => L(en, ar);
     return Scaffold(
       appBar: AppBar(

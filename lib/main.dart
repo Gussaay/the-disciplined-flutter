@@ -20,6 +20,9 @@ Future<void> main() async {
   );
   Get.put(AppController(), permanent: true);
   Get.put(FoodController(), permanent: true);
+  Get.put(GymController(), permanent: true);
+  Get.put(WatchController(), permanent: true);
+  Get.put(WeightController(), permanent: true);
   final savedTheme = GetStorage().read<String>('themeMode') ?? 'system';
   runApp(DisciplinedApp(
     themeMode: savedTheme == 'dark'

@@ -15,7 +15,6 @@ class DashboardPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final app = Get.find<AppController>();
     final food = Get.find<FoodController>();
     final box = GetStorage();
     String t(String en, String ar) => L(en, ar);

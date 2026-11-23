@@ -138,8 +138,8 @@ Map<String, dynamic> prayerNow(Map<String, DateTime> times, DateTime now, [DateT
     final id = p[0];
     if (!times[id]!.isAfter(now)) {
       current = id;
-    } else if (next == null) {
-      next = {'id': id, 'at': times[id]};
+    } else {
+      next ??= {'id': id, 'at': times[id]};
     }
   }
   if (next == null && tomorrowFajr != null) next = {'id': 'fajr', 'at': tomorrowFajr};

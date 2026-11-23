@@ -1,7 +1,7 @@
-/// Body composition from weight, impedance, height, age and sex — a
-/// port of the React edition's bodyComp.js (the open Xiaomi-scale
-/// formulas published by openScale). The scale measures only weight
-/// and impedance; every other number is a formula.
+// Body composition from weight, impedance, height, age and sex — a
+// port of the React edition's bodyComp.js (the open Xiaomi-scale
+// formulas published by openScale). The scale measures only weight
+// and impedance; every other number is a formula.
 
 double _r1(double v) => (v * 10).round() / 10;
 double _clamp(double v, double lo, double hi) => v < lo ? lo : (v > hi ? hi : v);
