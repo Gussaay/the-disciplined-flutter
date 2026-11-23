@@ -5,6 +5,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 import '../data/app_controller.dart';
 import '../data/food_controller.dart';
+import '../data/lessons.dart';
 import '../data/words.dart';
 
 /// English study (milestone 4): the word lists of the four levels
@@ -38,6 +39,29 @@ class _EnglishPageState extends State<EnglishPage> {
 
   String get level => (store['level'] ?? 'A2').toString();
   Map<String, dynamic> get words => store['words'] as Map<String, dynamic>;
+
+  Map<String, dynamic> get _log => store['log'] as Map<String, dynamic>;
+  Map<String, dynamic> get _doneToday {
+    final day = _log[today];
+    if (day is Map && day['done'] is Map) {
+      return Map<String, dynamic>.from(day['done'] as Map);
+    }
+    return {};
+  }
+
+  void _toggleExercise(String id, bool done) {
+    final day = _log[today] is Map ? Map<String, dynamic>.from(_log[today] as Map) : <String, dynamic>{};
+    final doneMap = day['done'] is Map ? Map<String, dynamic>.from(day['done'] as Map) : <String, dynamic>{};
+    if (done) {
+      doneMap[id] = true;
+    } else {
+      doneMap.remove(id);
+    }
+    day['done'] = doneMap;
+    setState(() => _log[today] = day);
+    box.write('english', store);
+    app.loadLocal();
+  }
 
   String _addDays(String key, int days) {
     final d = DateTime.parse(key).add(Duration(days: days));
@@ -95,6 +119,15 @@ class _EnglishPageState extends State<EnglishPage> {
           Text(t('Nothing due. Come back tomorrow for the next reviews.', 'لا شيء مستحق. عد غداً للمراجعات التالية.'))
         else
           _wordCard(context, queue.first, queue.length),
+        const SizedBox(height: 24),
+        Text(t('Lessons · B2', 'الدروس · B2'), style: Theme.of(context).textTheme.titleMedium),
+        if (level != 'B2')
+          Padding(
+            padding: const EdgeInsets.only(top: 4),
+            child: Text(t('Written for level B2 — try them when you feel ready.', 'مكتوبة لمستوى B2 — جرّبها عندما تشعر بالجاهزية.'), style: Theme.of(context).textTheme.bodySmall),
+          ),
+        const SizedBox(height: 8),
+        for (final lesson in kLessons) _lessonCard(context, lesson),
         const SizedBox(height: 20),
         Text(t('Free resources', 'مصادر مجانية'), style: Theme.of(context).textTheme.titleMedium),
         for (final r in kEnglishResources)
@@ -105,6 +138,68 @@ class _EnglishPageState extends State<EnglishPage> {
             onTap: () => launchUrl(Uri.parse(r[2]), mode: LaunchMode.externalApplication),
           ),
       ]),
+    );
+  }
+
+  Widget _lessonCard(BuildContext context, Lesson lesson) {
+    final done = _doneToday;
+    return Card(
+      margin: const EdgeInsets.only(bottom: 12),
+      child: ExpansionTile(
+        leading: Icon(lesson.skill == 'shadowing' ? Icons.mic_outlined : Icons.forum_outlined),
+        title: Text(t(lesson.title.en, lesson.title.ar), style: const TextStyle(fontWeight: FontWeight.w700)),
+        subtitle: Text('${lesson.minutes} ${t('min', 'دقيقة')} · ${lesson.skill}'),
+        childrenPadding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+        expandedCrossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(t(lesson.intro.en, lesson.intro.ar)),
+          const SizedBox(height: 12),
+          Text(t('The method', 'الطريقة'), style: const TextStyle(fontWeight: FontWeight.w700)),
+          for (var i = 0; i < lesson.steps.length; i++)
+            Padding(
+              padding: const EdgeInsets.only(top: 6),
+              child: Text('${i + 1}. ${t(lesson.steps[i].en, lesson.steps[i].ar)}'),
+            ),
+          const SizedBox(height: 12),
+          Text(t('Useful phrases', 'عبارات مفيدة'), style: const TextStyle(fontWeight: FontWeight.w700)),
+          const SizedBox(height: 6),
+          Wrap(spacing: 6, runSpacing: 6, children: [
+            for (final p in lesson.phrases)
+              Chip(label: Text(t(p.en, p.ar), style: const TextStyle(fontSize: 12))),
+          ]),
+          const SizedBox(height: 12),
+          Text(t('Exercises', 'التمارين'), style: const TextStyle(fontWeight: FontWeight.w700)),
+          for (final e in lesson.exercises) ...[
+            const Divider(),
+            Row(children: [
+              Expanded(child: Text(t(e.title.en, e.title.ar), style: const TextStyle(fontWeight: FontWeight.w600))),
+              Text('${e.minutes} ${t('min', 'د')}'),
+              Checkbox(
+                value: done[e.id] == true,
+                onChanged: (v) => _toggleExercise(e.id, v ?? false),
+              ),
+              Text(t('Done', 'تم')),
+            ]),
+            Text(t(e.instructions.en, e.instructions.ar), style: Theme.of(context).textTheme.bodySmall),
+            for (final line in e.lines)
+              Padding(
+                padding: const EdgeInsets.only(top: 8),
+                child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                  Text(line.en),
+                  Text(line.ar, style: Theme.of(context).textTheme.bodySmall),
+                ]),
+              ),
+            for (final prompt in e.prompts)
+              Padding(
+                padding: const EdgeInsets.only(top: 8),
+                child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                  const Text('• '),
+                  Expanded(child: Text(t(prompt.en, prompt.ar))),
+                ]),
+              ),
+          ],
+        ],
+      ),
     );
   }
 

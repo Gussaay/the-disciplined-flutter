@@ -133,9 +133,9 @@ void main() {
       expect(kWordLevels['A1']!.length, 30);
     });
 
-    test('this build is 1.2.1 build 4', () {
-      expect(kAppVersion, '1.2.1');
-      expect(kAppBuild, 4);
+    test('this build is 1.2.2 build 5', () {
+      expect(kAppVersion, '1.2.2');
+      expect(kAppBuild, 5);
     });
   });
 }

@@ -6,8 +6,8 @@ import 'package:http/http.dart' as http;
 /// published to a GitHub Release with a small update.json beside the
 /// APK. The app reads that manifest, and when a newer build exists it
 /// offers the direct APK link — no store, no paid service.
-const String kAppVersion = '1.2.1';
-const int kAppBuild = 4;
+const String kAppVersion = '1.2.2';
+const int kAppBuild = 5;
 
 const String kUpdateManifestUrl =
     'https://github.com/Gussaay/the-disciplined-flutter/releases/latest/download/update.json';
